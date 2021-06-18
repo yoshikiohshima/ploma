@@ -1,10 +1,10 @@
 # Ploma with Croquet Real-Time Collaboration
 
-# Launch demo
+# Demo
 
-Open this linke[(http://croquet.io/ploma)], and when the URL gets the parameter `q=...`, copy the the entire URL and open it in a new tab, or send it to your friends to draw together.
+Open this link [(http://croquet.io/ploma)]. When the URL gets the parameter `?q=...`, copy the the entire URL and open it in a new tab or send it to your friends to draw together.
 
-# What it is?
+# What is it?
 
 [Ploma](https://github.com/evhan55/ploma) by Evelyn Eastmond and Dan Amelang is a sketching application with high-fidelity ballpoint pen rendering for pressure sensitive tables.
 
@@ -16,11 +16,11 @@ By combining these two, this application allows multiple users collaboratively d
 
 `ploma.js` is based on the orignal `ploma.js` but reorganized so that another program can use the algorithm. The class effectively contains no state but pure algorithm. The data structure is expected to be passed in with the `useStateDuring` method.
 
-Wacom Tablet support is dropped. However, the pressure value is obtained via the standard PointerEvents. On iPad, the width of the touch is used to emulate the pressure; if you draw with the wider part of your finger, you get thiker lines.
+Wacom Tablet support is dropped. However, the pressure value is obtained via the standard PointerEvents. On iPad, the width of the touch is used to emulate the pressure; if you draw with the wider part of your finger, you get thicker lines. (One might consider reviving the Wacom Tablet plugin support, or integrate a library such as pressure.js.)
 
 `ploma-vdom.js` contains the Croquet bindings. It uses the [Croquet Virtual DOM framework](https://github.com/croquet/virtual-dom).
 
-`framework.js` is the minified version of the Croquet Virtual Framework.
+`framework.js` is minified Croquet Virtual Framework. (see its repo if you would like to reproduce it from source.)
 
 # Running Locally
 
