@@ -1,7 +1,63 @@
 class PlomaModel {
     init() {
+        if (!this.querySelector("#canvas")) {
+            let canvas = this.createElement("canvas");
+            canvas.domId = "canvas";
+            canvas.classList.add("no-select");
+
+            canvas.setCode("ploma.PlomaCanvasModel");
+            canvas.setViewCode("ploma.PlomaCanvasView");
+            this.appendChild(canvas);
+
+            let undoButton = this.createElement("div");
+            undoButton.domId = "undoButton";
+
+            undoButton.classList.add(`doButton`);
+            undoButton.classList.add(`undoButton`);
+
+            undoButton.addViewCode("ploma.ButtonView");
+
+            let icon = this.createElement("div");
+            icon.classList.add(`undoIcon`);
+            undoButton.appendChild(icon);
+
+            this.appendChild(undoButton);
+        }
+        console.log("PlomaModel.init");
+    }
+}
+
+class ButtonView {
+    init() {
+        this.addEventListener("pointerdown", "filterOut");
+        this.addEventListener("pointermove", "filterOut");
+        this.addEventListener("pointerup", "filterOut");
+    }
+
+    filterOut(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+    }
+}
+
+class PlomaView {
+    init() {
+        let undoButton = this.querySelector("#undoButton");
+        undoButton.dom.addEventListener("click", () => this.undo());
+        console.log("PlomaView.init");
+    }
+
+    undo() {
+        let canvas = this.querySelector("#canvas");
+        this.publish(canvas.model.id, "undo", this.viewId);
+    }
+}
+
+class PlomaCanvasModel {
+    init() {
         this.subscribe(this.id, "undo", "undo");
         this.subscribe(this.id, "redo", "redo");
+
         this.subscribe(this.id, "pointerDown", "pointerDown");
         this.subscribe(this.id, "pointerMove", "pointerMove");
         this.subscribe(this.id, "pointerUp", "pointerUp");
@@ -11,10 +67,11 @@ class PlomaModel {
             this._set("strokeLists", new Map());
             this._set("width", 800);
             this._set("height", 800);
+
         }
 
         this._set("lastPersistTime", this.now());
-        console.log("PlomaModel.init");
+        console.log("PlomaCanvasModel.init");
     }
 
     pointerDown(data) {
@@ -28,7 +85,7 @@ class PlomaModel {
             strokeLists.set(viewId, strokes);
         }
 
-        let stroke = {color, nib, viewId, points: [{x, y, p}]};
+        let stroke = {color, nib, viewId, done: true, points: [{x, y, p}]};
         strokes.push(stroke);
         global.push(stroke);
         this.publish(this.id, "beginStroke", {x, y, p, viewId, index: strokes.length - 1});
@@ -62,6 +119,48 @@ class PlomaModel {
         }
     }
 
+    undo(viewId) {
+        let strokeLists = this._get("strokeLists");
+        let strokes = strokeLists.get(viewId);
+
+        let findLast = () => {
+            if (!strokes) {return -1;}
+            let i;
+            for (i = strokes.length - 1; i >= 0; i--) {
+                if (strokes[i].done) {return i;}
+            }
+            return -1;
+        };
+
+        let index = findLast();
+        if (index >= 0) {
+            strokes[index].done = false;
+            this.publish(this.id, "drawAll");
+        }
+    }
+
+    redo(viewId) {
+        let strokeLists = this._get("strokeLists");
+        let strokes = strokeLists.get(viewId);
+
+        let find = () => {
+            let i;
+            if (!strokes) {return -1;}
+            if (strokes.length === 0) {return -1;}
+            if (strokes.length === 1) {return strokes[0].done ? -1 : 0;}
+            for (i = strokes.length - 1; i >= 1; i--) {
+                if (!strokes[i].done && strokes[i - 1].done) {return i;}
+            }
+            return -1;
+        };
+
+        let index = find();
+        if (index >= 0) {
+            strokes[index].done = true;
+            this.publish(this.id, "drawAll");
+        }
+    }
+
     loadPersistentData(data) {
         let top = this.wellKnownModel("modelRoot");
         data = top.parse(data.data);
@@ -86,7 +185,7 @@ class PlomaModel {
     }
 }
 
-class PlomaView {
+class PlomaCanvasView {
     init() {
         this.addEventListener("pointerdown", "pointerDown");
         this.addEventListener("pointermove", "pointerMove");
@@ -97,12 +196,15 @@ class PlomaView {
         this.subscribe(this.model.id, "beginStroke", "beginStroke");
         this.subscribe(this.model.id, "extendStroke", "extendStroke");
         this.subscribe(this.model.id, "endStroke", "endStroke");
+
+        this.subscribe(this.model.id, "drawAll", "drawAll");
+
         this.zoom = 1;
         this.ploma = new (this.model.getLibrary("ploma.Ploma"))();
 
         this.setup();
 
-        console.log("PlomaView.init");
+        console.log("PlomaCanvasView.init");
     }
 
     synced(flag) {
@@ -126,24 +228,14 @@ class PlomaView {
         console.log("setup");
         let w = this.w = this.model._get("width");
         let h = this.h = this.model._get("height");
-        this.canvas = document.createElement("canvas");
+        this.canvas = this.dom;
         this.canvas.setAttribute("width", w);
         this.canvas.setAttribute("height", h);
-        this.canvas.id = "canvas";
         this.canvas.classList.add("noselect");
 
         this.ctx = this.canvas.getContext("2d");
-        this.dom.appendChild(this.canvas);
-        this.ctx.clearRect(0, 0, w, h);
-        this.ctx.fillStyle = this.ploma.paperColor;
-        this.ctx.globalAlpha = 1;
-        this.ctx.fillRect(0, 0, w, h);
 
         this.s = new Map();
-
-        this.imageData = this.ctx.getImageData(0, 0, w, h);
-        this.imageDataData = this.imageData.data;
-
         this.isDrawing = false;
 
         window.onresize = () => {
@@ -153,24 +245,29 @@ class PlomaView {
         };
         window.onresize();
 
-        this.clearCanvas();
         this.drawAll();
     }
 
     clearCanvas() {
-        this.ctx.clearRect(0, 0, this.w, this.h);
+        let w = this.w;
+        let h = this.h;
+        this.ctx.clearRect(0, 0, w, h);
         this.ctx.fillStyle = this.ploma.paperColor;
         this.ctx.globalAlpha = 1;
         this.ctx.fillRect(0, 0, this.w, this.h);
+        this.imageData = this.ctx.getImageData(0, 0, w, h);
+        this.imageDataData = this.imageData.data;
     }
 
     drawAll() {
+        this.clearCanvas();
         let global = this.model._get("global");
         global.forEach(stroke => {
             let points = stroke.points;
             let viewId = stroke.viewId;
             let state = this.ensureUser(viewId);
             let m;
+            if (stroke.done === false) {return;}
 
             this.ploma.useStateDuring(this.imageDataData, state, () => {
                 if (points.length > 2) {
@@ -363,7 +460,8 @@ function start(parent, _json, persistentData) {
     parent.appendChild(elem);
 
     if (persistentData) {
-        elem.call("PlomaModel", "loadPersistentData", persistentData);
+        let canvas = elem.querySelector("#canvas");
+        canvas.call("PlomaCanvasModel", "loadPersistentData", persistentData);
     }
 }
 
@@ -371,6 +469,6 @@ import {Ploma} from "./ploma.js";
 
 export const ploma = {
     functions: [start],
-    expanders: [PlomaModel, PlomaView],
+    expanders: [PlomaModel, PlomaView, PlomaCanvasModel, PlomaCanvasView, ButtonView],
     classes: [Ploma]
 };
