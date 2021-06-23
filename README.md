@@ -2,7 +2,7 @@
 
 # Demo
 
-Open this link [(http://croquet.io/ploma)]. When the URL gets the parameter `?q=...`, copy the the entire URL and open it in a new tab or send it to your friends to draw together.
+Open [this link](http://croquet.io/ploma). When the URL gets the parameter `?q=...`, copy the the entire URL and open it in a new tab or send it to your friends to draw together.
 
 # What is it?
 
