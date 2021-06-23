@@ -125,8 +125,7 @@ class PlomaCanvasModel {
 
         let findLast = () => {
             if (!strokes) {return -1;}
-            let i;
-            for (i = strokes.length - 1; i >= 0; i--) {
+            for (let i = strokes.length - 1; i >= 0; i--) {
                 if (strokes[i].done) {return i;}
             }
             return -1;
@@ -144,14 +143,14 @@ class PlomaCanvasModel {
         let strokes = strokeLists.get(viewId);
 
         let find = () => {
-            let i;
             if (!strokes) {return -1;}
             if (strokes.length === 0) {return -1;}
             if (strokes.length === 1) {return strokes[0].done ? -1 : 0;}
-            for (i = strokes.length - 1; i >= 1; i--) {
+            for (let i = strokes.length - 1; i >= 1; i--) {
+                if (strokes[i].done) {return -1;}
                 if (!strokes[i].done && strokes[i - 1].done) {return i;}
             }
-            return -1;
+            return 0;
         };
 
         let index = find();
@@ -235,9 +234,6 @@ class PlomaCanvasView {
 
         this.ctx = this.canvas.getContext("2d");
 
-        this.s = new Map();
-        this.isDrawing = false;
-
         window.onresize = () => {
             let width = this.model._get("width");
             let height = this.model._get("height");
@@ -257,6 +253,8 @@ class PlomaCanvasView {
         this.ctx.fillRect(0, 0, this.w, this.h);
         this.imageData = this.ctx.getImageData(0, 0, w, h);
         this.imageDataData = this.imageData.data;
+        this.s = new Map();
+        this.isDrawing = false;
     }
 
     drawAll() {
