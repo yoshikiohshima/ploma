@@ -230,8 +230,6 @@ export class Ploma {
         }
     }
 
-    */
-
     // ------------------------------------------
     // curStroke
     //
@@ -241,6 +239,7 @@ export class Ploma {
     //
     // [{x, y, p}, {x, y, p}, ...]
     //
+
     curStroke(_viewId) {
         let s = this.state;
         let curStroke = [];
@@ -249,6 +248,7 @@ export class Ploma {
         }
         return curStroke;
     }
+    */
 
     // ------------------------------------------
     // setSample
@@ -257,21 +257,6 @@ export class Ploma {
     //
     setSample(n) {
         this.sample = n;
-    }
-
-    // ------------------------------------------
-    // resize
-    //
-    // Resize the Ploma instance to a new width
-    // and height.
-    //
-    resize(a, b) {
-        this.canvas.setAttribute('width', a);
-        this.canvas.setAttribute('height', b);
-        this.w = a;//this.canvas.getAttribute('width');
-        this.h = b; //this.canvas.getAttribute('height');
-        this.w_4 = this.w * 4;
-        this.clear();
     }
 
     // ------------------------------------------
@@ -355,9 +340,9 @@ export class Ploma {
         s.lastControlPoint = p2;
 
         // Step along curve and draw step
-        let stepPoints = this.calculateStepPoints(p0, p1, p2, p3, viewId);
+        let stepPoints = this.calculateStepPoints(p0, p1, p2, p3);
         for (let i = 0; i < stepPoints.length; i++) {
-            this.drawStep(this.imageDataData, stepPoints[i], viewId);
+            this.drawStep(this.imageDataData, stepPoints[i]);
         }
 
         // Calculate redraw bounds
@@ -395,7 +380,7 @@ export class Ploma {
     // Calculates even steps along a bezier with
     // control points (p0, p1, p2, p3).
     //
-    calculateStepPoints(p0, p1, p2, p3, _viewId) {
+    calculateStepPoints(p0, p1, p2, p3) {
         let s = this.state;
         let stepPoints = [];
         let i = s.stepInterval;
@@ -453,7 +438,7 @@ export class Ploma {
     // Returns a filtered, sanitized version of
     // point p2 between points p1 and p3.
     //
-    calculateFilteredPoint(p1, p2, p3, _viewId) {
+    calculateFilteredPoint(p1, p2, p3) {
         let s = this.state;
         //if (p1 == null || p2 == null || p3 == null)
         //  return null; // Not enough points yet to filter
@@ -472,10 +457,10 @@ export class Ploma {
     //
     // Calculates a non-linear width offset in
     // the range [-2, 1] based on pressure.
+    // and nib selection
     //
-    calculateWidth(p) {
+    calculateWidth(p, nib) {
         let width = 0.0;
-        //console.log(p);
 
         if (p < 0) { // Possible output from bezier
             width = -3.50;
@@ -499,7 +484,7 @@ export class Ploma {
             width = -1.30;
         }
 
-        return width;
+        return width * nib;
     }
 
     // ------------------------------------------
@@ -508,7 +493,7 @@ export class Ploma {
     // Draws a 5x5 pixel grid at a step point
     // with proper antialiasing and texture.
     //
-    drawStep(id, point, _viewId) {
+    drawStep(id, point) {
         let s = this.state;
 
         /////////////////////
@@ -516,7 +501,7 @@ export class Ploma {
         /////////////////////
 
         let width = 0.0;
-        width = this.calculateWidth(point.p);
+        width = this.calculateWidth(point.p, s.nib);
 
         /////////////////////
         // LOOP
@@ -654,16 +639,8 @@ export class Ploma {
     }
 
     useStateDuring(imageDataData, s, fn) {
-        let oldImageDataData = this.imageDataData;
         this.imageDataData = imageDataData;
         this.state = s;
-        let result;
-        try {
-            result = fn();
-        } finally {
-            this.imageDataData = oldImageDataData;
-            this.state = null;
-        }
-        return result;
+        return fn();
     }
 }

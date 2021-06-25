@@ -24,9 +24,6 @@ canvas#canvas {
 .doButton {
     height: 36px;
     width: 36px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
     font-family: sans-serif;
     font-size: 24px;
     background: rgba(255, 255, 255, 0.9);
@@ -36,6 +33,87 @@ canvas#canvas {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.colorPicker {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 120px;
+    height: 120px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    overflow: hidden;
+}
+
+.color-palette {
+    display: flex;
+    flex-wrap: wrap;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    background-color: #CDCDCD;
+}
+
+.nibs-palette {
+    display: flex;
+    flex-grow: 1;
+    margin-top: 8px;
+    background-color: #CDCDCD;
+    justify-content: center;
+    align-items: center;
+}
+
+.picker-hidden {
+    height: 32px;
+    justify-content: flex-start;
+    transition: height 0.25s;
+}
+
+.picker-hidden > .color-palette {
+    height: 0px;
+}
+
+
+.picker-hidden > .nibs-palette {
+    display: none;
+}
+
+.swatch {
+    width: 24px;
+    height: 24px;
+    margin: 2px;
+    border: 1px solid gray;
+    border-radius: 50%;
+}
+
+.swatch-pen {
+    border-radius: 50%;
+    border: 1px solid gray;
+
+}
+
+.nib-holder {
+    border: 0px;
+    display: flex;
+    align-items: center;
+    margin-left: 6px;
+    margin-right: 6px;
+    justify-content: center;
+}
+
+.selected {
+   box-shadow: 0 3px 6px 0 rgba(0,0,0,0.3), 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.button-list {
+    display: flex;
+    margin-bottom: 8px;
+    align-items: center;
+    background-color: white;
+    height: 36px;
 }
 
 .undoIcon {
