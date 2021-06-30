@@ -74,22 +74,19 @@ class PlomaCanvasModel {
     pointerDown(message) {
         let data = this.getData();
         data.beginStroke(message);
-        let {x, y, p, viewId} = message;
-        this.publish(this.id, "beginStroke", {x, y, p, viewId});
+        this.publish(this.id, "beginStroke", message);
     }
 
     pointerMove(message) {
         let data = this.getData();
         data.extendStroke(message);
-        let {x, y, p, viewId} = message;
-        this.publish(this.id, "extendStroke", {x, y, p, viewId});
+        this.publish(this.id, "extendStroke", message);
     }
 
     pointerUp(message) {
         let data = this.getData();
         data.endStroke(message);
-        let {x, y, p, viewId} = message;
-        this.publish(this.id, "endStroke", {x, y, p, viewId});
+        this.publish(this.id, "endStroke", message);
         let now = this.now();
         if (now >= this._get("lastPersistTime") + 30000) {
             this._set("lastPersistTime", now);
@@ -387,6 +384,8 @@ class PlomaCanvasView {
         let viewId = data.viewId;
         if (this.viewId === viewId) {return;}
         let state = this.ensureUser(viewId);
+        state.color = data.color;
+        state.nib = data.nib;
         this.ploma.useStateDuring(this.imageDataData, state, () => {
             return this.ploma.beginStroke(data);
         });
