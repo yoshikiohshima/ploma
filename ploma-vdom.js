@@ -317,6 +317,10 @@ class PlomaCanvasView {
 
     getPressure(evt) {
         if (evt.pressure > 0) {return evt.pressure;}
+        if (evt.touchType === "stylus") {
+            return evt.force / evt.altitudeAngle;
+        }
+
         if (evt.force > 0) {return evt.force;}
 
         return 0.5;
@@ -365,6 +369,7 @@ class PlomaCanvasView {
     }
 
     pointerUp(evt) {
+        this.pointerMove(evt);
         let wasDrawing = this.isDrawing;
         this.isDrawing = false;
         if (!wasDrawing) {return;}
