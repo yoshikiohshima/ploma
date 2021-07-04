@@ -66,7 +66,7 @@ export class ColorPickerView {
         this.dom.appendChild(this.nibs);
 
         this.selectColor(this.palette.childNodes[0]);
-        this.selectNib(this.nibs.childNodes[0]);
+        this.selectNib(this.nibs.childNodes[1]);
     }
 
     selectColor(elem) {
