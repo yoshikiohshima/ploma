@@ -17,6 +17,13 @@ class PlomaModel {
             this.appendChild(picker);
 
             picker.call("ColorPickerModel", "setDrawerId", canvas.id);
+
+            /*
+            let logger = this.createElement();
+            logger.domId = "logger";
+            logger.classList.add("logger");
+            this.appendChild(logger);
+            */
         }
         console.log("PlomaModel.init");
     }
@@ -87,11 +94,7 @@ class PlomaCanvasModel {
         let data = this.getData();
         data.endStroke(message);
         this.publish(this.id, "endStroke", message);
-        let now = this.now();
-        if (now >= this._get("lastPersistTime") + 30000) {
-            this._set("lastPersistTime", now);
-            this.savePersistentData();
-        }
+        this.persistRequest();
     }
 
     undo(viewId) {
@@ -145,7 +148,16 @@ class PlomaCanvasModel {
                 totalStrokes: data.global.length});
         } else if (data.version === "2") {
             data = top.parse(data.data);
+            this._get("data").setData(data);
         }
+    }
+
+    persistRequest() {
+        const now = Date.now();
+        if (now - this._get("lastPersistTime") < 30000) {/* console.log("skip"); */ return;}
+        /* console.log("write", now); */
+        this._set("lastPersistTime", now);
+        this.savePersistentData();
     }
 
     savePersistentData() {
@@ -158,14 +170,6 @@ class PlomaCanvasModel {
                     global, strokeLists, totalStrokes, width, height
                 })
             };
-            /*return {
-                version: "1",
-                data: top.stringify({
-                    global: this._get("global"),
-                    width: this._get("width"),
-                    height: this._get("height")
-                })
-            };*/
         };
         top.persistSession(func);
     }
@@ -173,9 +177,9 @@ class PlomaCanvasModel {
 
 class PlomaCanvasView {
     init() {
-        let ua = window.navigator.userAgent;
-        let probablySafari = ua.indexOf("Safari") >= 0 && ua.indexOf("Chrome") === -1;
-        if (window.ontouchstart && probablySafari) {
+        // let ua = window.navigator.userAgent;
+        // let probablySafari = ua.indexOf("Safari") >= 0 && ua.indexOf("Chrome") === -1;
+        if (false /* window.ontouchstart && probablySafari */) {
             this.addEventListener("touchstart", "pointerDown");
             this.addEventListener("touchmove", "pointerMove");
             this.addEventListener("touchend", "pointerUp");
@@ -315,15 +319,39 @@ class PlomaCanvasView {
         return this.s.get(viewId);
     }
 
-    getPressure(evt) {
-        if (evt.pressure > 0) {return evt.pressure;}
-        if (evt.touchType === "stylus") {
-            return evt.force / evt.altitudeAngle;
+    forceMap(force) {
+        function map(value, valueMin, valueMax, from, to) {
+            let ratio = (value - valueMin) / (valueMax - valueMin);
+            return from + ratio * (to - from);
         }
 
-        if (evt.force > 0) {return evt.force;}
+        if (force < 0.2) {
+            return map(force, 0, 0.2, 0, 0.4);
+        }
 
-        return 0.5;
+        return map(force, 0.2, 1.0, 0.4, 1.0);
+    }
+
+    getPressure(evt) {
+        let v;
+        if (evt.pressure > 0) {
+            v = this.forceMap(evt.pressure);
+        } else if (evt.touchType === "stylus") {
+            // let force = this.forceMap(evt.force);
+            v =  evt.force / Math.sin(evt.altitudeAngle);
+        } else if (evt.force > 0) {
+            v = evt.force;
+        } else {
+            v = 0.5;
+        }
+
+        /*
+        let logger = window.topView.querySelector("#logger");
+        if (logger) {
+            logger.dom.textContent += `\n{type: ${evt.type}, touchType: ${evt.touchType}, force: ${evt.force}, pressure: ${evt.pressure}, altitudeAngle: ${evt.altitudeAngle}, mapped: ${v}}`;
+        }
+        */
+        return v;
     }
 
     makeEvent(evt) {
@@ -435,7 +463,6 @@ class PlomaCanvasView {
     }
 
     nibSelected(nib) {
-        console.log("nib", this.viewId, nib);
         let s = this.ensureUser(this.viewId);
         s.nib = parseFloat(nib);
     }

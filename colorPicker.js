@@ -75,7 +75,13 @@ export class ColorPickerView {
             child.classList.remove("selected");
         }
 
-        elem.classList.add("selected");
+        /*
+          let colorStr = elem.style.getPropertyValue("background-color");
+          let result = /rgb\(([0-9]+), ([0-9]+), ([0-9]+)\)/.exec(colorStr);
+          if (!result) {return;}
+          let hex = (v) => parseFloat(v).toString(16).padStart(2, "0");
+          let color = `#${result.slice(1, 4).map(hex).reduce((a, b) => a + b)}`;
+        */
 
         let color = elem.getAttribute("color");
 
