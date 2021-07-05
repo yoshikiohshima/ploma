@@ -122,6 +122,33 @@ canvas#canvas {
     height: 24px;
 }
 
+.all {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    margin-left: 8px;
+    width: calc(100% - 150px);
+}
+
+.explanation {
+    width: calc(100% - 160px);
+    margin-left: 16px;
+    margin-bottom: 8px;
+}
+
+.github-badge {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    z-index: 4;
+}
+
 #logger {
     position: absolute;
     height: 100px;
@@ -130,4 +157,8 @@ canvas#canvas {
     left: 0px;
     background-color: white;
     overflow: scroll;
+}
+
+#croquet-root {
+    flex-grow: 1;
 }

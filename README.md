@@ -28,4 +28,4 @@ You can run a local server (`server.js` or `server.py`).  Again, open `localhost
 
 # To Do
 
-All past stroke data is stored in the data structure. We need to flatten old strokes that would not be undone into a bitmap, and only keep recent strokes for undo.
+All past stroke data is stored in a data structure. We need to flatten old strokes that would not be undone into a bitmap, and only keep recent strokes for undo.

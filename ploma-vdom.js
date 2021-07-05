@@ -1,3 +1,5 @@
+/* globals Croquet */
+
 class PlomaModel {
     init() {
         if (!this.querySelector("#canvas")) {
@@ -44,6 +46,8 @@ class ButtonView {
 
 class PlomaView {
     init() {
+        Croquet.App.makeWidgetDock();
+        Croquet.App.makeSessionWidgets();
         console.log("PlomaView.init");
     }
 
@@ -235,6 +239,8 @@ class PlomaCanvasView {
         this.canvas = this.dom;
         this.canvas.setAttribute("width", w);
         this.canvas.setAttribute("height", h);
+        this.canvas.style.setProperty("width", `${w}px`);
+        this.canvas.style.setProperty("height", `${h}px`);
         this.canvas.classList.add("noselect");
 
         this.ctx = this.canvas.getContext("2d");
@@ -244,9 +250,8 @@ class PlomaCanvasView {
             let height = this.getData().height;
             this.resizeImage(width, height);
         };
-        window.onresize();
-
         this.drawAll();
+        window.onresize();
     }
 
     clearCanvas() {
@@ -484,10 +489,12 @@ class PlomaCanvasView {
     }
 
     resizeImage(width, height) {
-        let scale = Math.min(window.innerWidth / width, window.innerHeight / height);
+        let root = document.querySelector("#croquet-root");
+        let rect = root.getBoundingClientRect();
+        let scale = Math.min(rect.width / width, rect.height / height);
         scale *= this.zoom;
-        let marginW = (window.innerWidth - scale * width) / 2;
-        let marginH = (window.innerHeight - scale * height) / 2;
+        let marginW = (rect.width - scale * width) / 2;
+        let marginH = (rect.height - scale * height) / 2;
 
         this.canvas.style.removeProperty("display");
         this.canvas.style.setProperty("width", `${width}px`);
