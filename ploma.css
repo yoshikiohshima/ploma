@@ -126,20 +126,45 @@ canvas#canvas {
     display: flex;
     flex-direction: column;
     height: 100%;
+    font-family: sans-serif;
+}
+
+.banner {
+    display: flex;
+    flex-direction: column;
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-top: 8px;
+}
+
+.title-line {
+    display: flex;
+    margin-left: 8px;
+    margin-right: 8px;
+    align-items: baseline;
 }
 
 .title {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 4px;
-    margin-left: 8px;
-    width: calc(100% - 150px);
+    white-space: nowrap;
+    width: fit-content;
 }
 
 .explanation {
-    width: calc(100% - 160px);
-    margin-left: 16px;
+    margin-left: auto;
     margin-bottom: 8px;
+    width: 80%;
+    border: 1px solid #888;
+    border-radius: 4px;
+}
+
+.subtitle {
+    margin-top: 4px;
+    margin-left: 16px;
+    font-style: italic;
+    
 }
 
 .github-badge {
@@ -161,4 +186,18 @@ canvas#canvas {
 
 #croquet-root {
     flex-grow: 1;
+}
+
+@media (max-width: 450px) {
+    .title {
+	font-size: 14px;
+    }
+
+    .subtitle {
+	font-size: 8px;
+    }
+
+    .explanation {
+	display: none;
+    }
 }
