@@ -125,13 +125,15 @@ canvas#canvas {
 .all {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    align-items: center;
+    height: fit-content;
     font-family: sans-serif;
 }
 
 .banner {
     display: flex;
     flex-direction: column;
+    align-items: center;
     margin-left: 8px;
     margin-right: 8px;
     margin-top: 8px;
@@ -141,7 +143,7 @@ canvas#canvas {
     display: flex;
     margin-left: 8px;
     margin-right: 8px;
-    align-items: baseline;
+    align-items: center;
 }
 
 .title {
@@ -163,8 +165,6 @@ canvas#canvas {
 .subtitle {
     margin-top: 4px;
     margin-left: 16px;
-    font-style: italic;
-    
 }
 
 .github-badge {
@@ -194,10 +194,16 @@ canvas#canvas {
     }
 
     .subtitle {
-	font-size: 8px;
+	display: none;
+    }
+}
+
+@media (max-height: 450px) {
+    .title {
+	display: none;
     }
 
-    .explanation {
+    .subtitle {
 	display: none;
     }
 }

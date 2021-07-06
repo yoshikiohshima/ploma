@@ -312,7 +312,7 @@ class PlomaCanvasView {
             stepInterval: 0.3,
             pointCounter: 0,
             color: {r: 25, g: 8, b: 45},
-            nib: 1
+            nib: 0.6
         };
     }
 
