@@ -48,7 +48,7 @@ class PlomaView {
     init() {
         let qr = Croquet.App.makeQRCanvas();
         document.body.appendChild(qr);
-        qr.classList.add("qr", "noselect");
+        qr.classList.add("qr");
         console.log("PlomaView.init");
     }
 
@@ -250,7 +250,6 @@ class PlomaCanvasView {
         this.canvas.setAttribute("height", h);
         this.canvas.style.setProperty("width", `${w}px`);
         this.canvas.style.setProperty("height", `${h}px`);
-        this.canvas.classList.add("noselect");
 
         this.ctx = this.canvas.getContext("2d");
 
@@ -516,6 +515,7 @@ class PlomaCanvasView {
     }
 
     absorb(evt) {
+        evt.preventDefault();
         evt.returnValue = false;
     }
 }
@@ -525,7 +525,6 @@ function start(parent, _json, persistentData) {
     elem.setCode("ploma.PlomaModel");
     elem.setViewCode("ploma.PlomaView");
     elem.domId = "ploma";
-    elem.classList.add("noselect");
 
     parent.appendChild(elem);
 
