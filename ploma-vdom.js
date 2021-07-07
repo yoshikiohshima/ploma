@@ -46,8 +46,9 @@ class ButtonView {
 
 class PlomaView {
     init() {
-        Croquet.App.makeWidgetDock();
-        Croquet.App.makeSessionWidgets();
+        let qr = Croquet.App.makeQRCanvas();
+        document.body.appendChild(qr);
+        qr.classList.add("qr", "noselect");
         console.log("PlomaView.init");
     }
 
@@ -183,15 +184,14 @@ class PlomaCanvasView {
     init() {
         // let ua = window.navigator.userAgent;
         // let probablySafari = ua.indexOf("Safari") >= 0 && ua.indexOf("Chrome") === -1;
-        if (false /* window.ontouchstart && probablySafari */) {
-            this.addEventListener("touchstart", "pointerDown");
-            this.addEventListener("touchmove", "pointerMove");
-            this.addEventListener("touchend", "pointerUp");
-        } else {
-            this.addEventListener("pointerdown", "pointerDown");
-            this.addEventListener("pointermove", "pointerMove");
-            this.addEventListener("pointerup", "pointerUp");
-        }
+
+        this.addEventListener("pointerdown", "pointerDown");
+        this.addEventListener("pointermove", "pointerMove");
+        this.addEventListener("pointerup", "pointerUp");
+
+        this.dom.addEventListener("touchstart", (evt) => this.absorb(evt));
+        this.dom.addEventListener("touchmove", (evt) => this.absorb(evt));
+        this.dom.addEventListener("touchend", (evt) => this.absorb(evt));
 
         this.subscribe(this.viewId, "synced", "synced");
 
@@ -207,6 +207,8 @@ class PlomaCanvasView {
         this.ploma = new (this.model.getLibrary("ploma.Ploma"))();
 
         this.setup();
+
+        // setTimeout(() => this.test(), 2);
 
         console.log("PlomaCanvasView.init");
     }
@@ -226,6 +228,13 @@ class PlomaCanvasView {
             this.canvas.remove();
             this.canvas = null;
         }
+    }
+
+    test() {
+        this.pointerDown({type: "pointerdown", offsetX: 100, offsetY: 100, pressure: 0.5, buttons: 1});
+        this.pointerMove({type: "pointermove", offsetX: 110, offsetY: 100, pressure: 0.5, buttons: 1});
+        this.pointerMove({type: "pointermove", offsetX: 110, offsetY: 110, pressure: 0.5, buttons: 1});
+        this.pointerUp({type: "pointerup", offsetX: 110, offsetY: 120, pressure: 0.5, buttons: 1});
     }
 
     getData() {
@@ -252,6 +261,7 @@ class PlomaCanvasView {
         };
         this.drawAll();
         window.onresize();
+
     }
 
     clearCanvas() {
@@ -376,6 +386,8 @@ class PlomaCanvasView {
 
     pointerDown(evt) {
         this.isDrawing = true;
+        if (evt.buttons !== 1) {return;}
+        evt.preventDefault();
         let state = this.ensureUser(this.viewId);
         let data = this.makeEvent(evt);
         data.color = state.color;
@@ -388,7 +400,8 @@ class PlomaCanvasView {
 
     pointerMove(evt) {
         if (!this.isDrawing) {return;}
-        if (!evt.buttons) {return;}
+        if (evt.buttons !== 1) {return;}
+        evt.preventDefault();
         let state = this.ensureUser(this.viewId);
         let data = this.makeEvent(evt);
         this.publish(this.model.id, "pointerMove", data);
@@ -402,7 +415,7 @@ class PlomaCanvasView {
     }
 
     pointerUp(evt) {
-        this.pointerMove(evt);
+        // this.pointerMove(evt);
         let wasDrawing = this.isDrawing;
         this.isDrawing = false;
         if (!wasDrawing) {return;}
@@ -500,6 +513,10 @@ class PlomaCanvasView {
         this.canvas.style.setProperty("width", `${width}px`);
         this.canvas.style.setProperty("height", `${height}px`);
         this.canvas.style.setProperty("transform", `translate(${marginW}px, ${marginH}px) scale(${scale})`);
+    }
+
+    absorb(evt) {
+        evt.returnValue = false;
     }
 }
 

@@ -44,7 +44,7 @@ function map(value, valueMin, valueMax, from, to) {
 
 export class Ploma {
     constructor() {
-        this.sample = 2;
+        this.sample = 1; // 2
         this.setupCanvas(800, 800);
     }
 
@@ -73,7 +73,7 @@ export class Ploma {
     // 0-1) values.
     //
     beginStroke(data) {
-        let {x, y, p, _viewId} = data;
+        let {x, y, p} = data;
         let s = this.state;
 
         let point = new Point(x, y, p);
@@ -114,6 +114,7 @@ export class Ploma {
         // Sampled and filtered
         //
         if (s.pointCounter % this.sample === 0) {
+            // this condition may not be needed now
 
             // Push sampled point
             //if(curRawSampledStroke.last().equals(point)) {

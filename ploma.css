@@ -188,6 +188,14 @@ canvas#canvas {
     flex-grow: 1;
 }
 
+.qr {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    width: 100px;
+    height: 100px;
+}
+
 @media (max-width: 450px) {
     .title {
 	font-size: 14px;
