@@ -20,7 +20,7 @@ Wacom Tablet support is dropped. However, the pressure value is obtained via the
 
 `ploma-vdom.js` contains the Croquet bindings. It uses the [Croquet Virtual DOM framework](https://github.com/croquet/virtual-dom).
 
-`framework.js` is minified Croquet Virtual Framework. (see its repo if you would like to reproduce it from source.)
+`croquet-virtual-dom.js` is minified Croquet Virtual Framework. (see its repo if you would like to reproduce it from source.)
 
 # Running Locally
 

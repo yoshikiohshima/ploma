@@ -1,4 +1,4 @@
-import {M} from "./framework.js";
+import {M} from "./croquet-virtual-dom.js";
 
 // for debugging purposes to be able to run the app from unsecure domain with the isLocal flag.
 
