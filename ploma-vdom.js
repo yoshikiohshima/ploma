@@ -158,7 +158,7 @@ class PlomaCanvasModel {
     }
 
     persistRequest() {
-        const now = Date.now();
+        const now = this.now();
         if (now - this._get("lastPersistTime") < 30000) {/* console.log("skip"); */ return;}
         /* console.log("write", now); */
         this._set("lastPersistTime", now);
