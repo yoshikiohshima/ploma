@@ -8,7 +8,7 @@ Open [this link](http://croquet.io/ploma). When the URL gets the parameter `?q=.
 
 [Ploma](https://github.com/evhan55/ploma) by Evelyn Eastmond and Dan Amelang is a sketching application with high-fidelity ballpoint pen rendering for pressure sensitive tables.
 
-[Croquet](https://github.com/croquet) provides an SDK and frameworks to create real-time collaborative apps.
+[Croquet](https://github.com/croquet) provides a library and frameworks to create real-time collaborative apps.
 
 By combining these two, this application allows multiple users collaboratively draw in real time.
 
@@ -24,7 +24,10 @@ Wacom Tablet support is dropped. However, the pressure value is obtained via the
 
 # Running Locally
 
+First, obtrain your own Cqouet API Key from [Croquet](https://croquet.io/keys). Paste a key into the `<paste your key here>` in index.html.
+
 You can run a local server (`server.js` or `server.py`).  Again, open `localhost:8000/index.html` in one tab, and then copy the entire URL with `q=..` to another tab.
+
 
 # To Do
 
