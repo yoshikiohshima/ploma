@@ -4,6 +4,11 @@
 
 Open [this link](http://croquet.io/ploma). When the URL gets the parameter `?q=...`, copy the the entire URL and open it in a new tab or send it to your friends to draw together.
 
+<p align="center">
+  <img src="https://gist.githubusercontent.com/yoshikiohshima/7ac8ed8f2465e03e10826ab0916b6802/raw/9ee59e47bded4801961c8d606cabc934be83fbd2/totoro.png" width="400"/>
+</p>
+
+
 # What is it?
 
 [Ploma](https://github.com/evhan55/ploma) by Evelyn Eastmond and Dan Amelang is a sketching application with high-fidelity ballpoint pen rendering for pressure sensitive tables.
